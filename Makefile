@@ -2,7 +2,6 @@ PROJ_NAME = go-web-server-sample
 VM_NAME = $(PROJ_NAME)-vm
 MULTIPASS_SSH_KEY_PATH = /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa
 LOCALHOST_MYSQL_PORT = 13306
-GO_VERSION = 1.19.4
 
 .PHONY: launch-vm
 launch-vm:
@@ -12,7 +11,7 @@ launch-vm:
 		--mem 4G \
 		--disk 8G \
 		--mount $(PWD):/home/ubuntu/$(PROJ_NAME) \
-		--cloud-init cloud-config-$(ARCH).yml
+		--cloud-init cloud-config.yml
 
 .PHONY: start-vm
 start-vm:
@@ -30,18 +29,11 @@ delete-vm:
 delete-vm/purge:
 	multipass delete --purge $(VM_NAME)
 
-.PHONY: cloud-config.yml
 cloud-config.yml:
 	curl -fsSL https://raw.githubusercontent.com/canonical/multipass-blueprints/35f1e18a94806266c5c7f0763f3054f2ec44256d/v1/docker.yaml | \
 		yq '.instances.docker.cloud-init.vendor-data' | \
-		yq '.packages += "docker-compose-plugin"' | \
-		yq '.runcmd += "wget https://go.dev/dl/go$(GO_VERSION).linux-$(ARCH).tar.gz\nsudo tar -C /usr/local -xzf go$(GO_VERSION).linux-$(ARCH).tar.gz\nrm go$(GO_VERSION).linux-$(ARCH).tar.gz"' | \
-		yq '.runcmd += "echo '\''export PATH=$$PATH:/usr/local/go/bin\n'\'' >> /home/ubuntu/.bashrc"' \
-		> cloud-config-$(ARCH).yml
-cloud-config-amd64.yml:
-	make ARCH=amd64 cloud-config.yml
-cloud-config-arm64.yml:
-	make ARCH=arm64 cloud-config.yml
+		yq '.packages += "docker-compose-plugin"' \
+		> cloud-config.yml
 
 .PHONY: echo-vm-ip
 echo-vm-ip:

@@ -1,0 +1,17 @@
+services:
+  rdb:
+    image: mysql:8.0.31
+    platform: linux
+    restart: always
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_USER: ${DB_USER:-root}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-debug}
+      MYSQL_DATABASE: ${DB_SCHEMA:-go_web_server_sample_debug}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --default-storage-engine=innodb

@@ -1,6 +1,7 @@
 PROJ_NAME = go-web-server-sample
 VM_NAME = $(PROJ_NAME)-vm
 MULTIPASS_SSH_KEY_PATH = /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa
+LOCALHOST_MYSQL_PORT = 13306
 
 .PHONY: launch-vm
 launch-vm:
@@ -52,3 +53,15 @@ stop-portforward-vm:
 .PHONY: open-portainer
 open-portainer:
 	open http://`make -s echo-vm-ip`:9000
+
+.PHONY: docker-compose-up
+docker-compose-up:
+	multipass exec $(VM_NAME) -- docker compose up -d
+
+.PHONY: docker-compose-down
+docker-compose-down:
+	multipass exec $(VM_NAME) -- docker compose down
+
+.PHONY: mysql-local
+mysql-local:
+	mysql -h 127.0.0.1 -u root --port=$(LOCALHOST_MYSQL_PORT) -pdebug go_web_server_sample_debug

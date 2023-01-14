@@ -15,6 +15,22 @@ ref:
 
 - [How to install Multipass on macOS \_ Multipass documentation](https://multipass.run/docs/installing-on-macos#heading--use-brew)
 
+### Setup
+
+#### Create `.envrc`
+
+- Apple Silicon
+
+```sh
+export ARCH=arm64
+```
+
+- Intel
+
+```sh
+export ARCH=amd64
+```
+
 ### Start development on local
 
 ```sh
@@ -27,6 +43,5 @@ $ make docker-compose-up
 
 ```sh
 $ make stop-vm
-$ make start-vm
 $ make docker-compose-down
 ```

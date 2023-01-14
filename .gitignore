@@ -19,3 +19,9 @@
 
 # Go workspace file
 go.work
+
+
+# Below this line, manual editing
+#
+# direnv
+.envrc

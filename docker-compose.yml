@@ -1,4 +1,14 @@
 services:
+  app:
+    image: golang:1.19.5-alpine
+    ports:
+      - "1323:1323"
+    volumes:
+      - type: bind
+        source: .
+        target: /go/src/github.com/kosukeohmura/go-web-server-sample
+    working_dir: /go/src/github.com/kosukeohmura/go-web-server-sample
+    command: go run main.go
   db:
     image: mysql:8.0.31
     platform: linux

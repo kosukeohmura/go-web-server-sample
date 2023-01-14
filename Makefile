@@ -1,0 +1,54 @@
+PROJ_NAME = go-web-server-sample
+VM_NAME = $(PROJ_NAME)-vm
+MULTIPASS_SSH_KEY_PATH = /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa
+
+.PHONY: launch-vm
+launch-vm:
+	multipass launch 22.04 \
+		--name $(VM_NAME) \
+		--cpus 2 \
+		--mem 4G \
+		--disk 8G \
+		--mount $(PWD):/home/ubuntu/$(PROJ_NAME) \
+		--cloud-init cloud-config.yml
+
+.PHONY: start-vm
+start-vm:
+	multipass start $(VM_NAME)
+
+.PHONY: stop-vm
+stop-vm:
+	multipass stop $(VM_NAME)
+
+.PHONY: delete-vm
+delete-vm:
+	multipass delete $(VM_NAME)
+
+.PHONY: delete-vm/purge
+delete-vm/purge:
+	multipass delete --purge $(VM_NAME)
+
+cloud-config.yml:
+	curl -fsSL https://raw.githubusercontent.com/canonical/multipass-blueprints/35f1e18a94806266c5c7f0763f3054f2ec44256d/v1/docker.yaml | \
+		yq '.instances.docker.cloud-init.vendor-data' | \
+		yq '.packages += "docker-compose-plugin"' \
+		> cloud-config.yml
+
+.PHONY: echo-vm-ip
+echo-vm-ip:
+	multipass info $(VM_NAME) --format json | jq -r '.info["$(VM_NAME)"].ipv4[0]'
+
+.PHONY: portforward-vm
+portforward-vm:
+	sudo ssh -L $(LOCALHOST_MYSQL_PORT):localhost:3306 \
+    	-i $(MULTIPASS_SSH_KEY_PATH) \
+		-fN \
+    	ubuntu@`make -s echo-vm-ip`
+
+.PHONY: stop-portforward-vm
+stop-portforward-vm:
+	sudo kill -9 `sudo lsof -t -i:$(LOCALHOST_MYSQL_PORT)`
+
+.PHONY: open-portainer
+open-portainer:
+	open http://`make -s echo-vm-ip`:9000

@@ -42,19 +42,18 @@ echo-vm-ip:
 
 .PHONY: portforward-vm
 portforward-vm:
-	sudo ssh -L $(LOCALHOST_APP_PORT):localhost:1323 \
-    	-i $(MULTIPASS_SSH_KEY_PATH) \
+	sudo ssh \
 		-fN \
-    	ubuntu@`make -s echo-vm-ip`
-	sudo ssh -L $(LOCALHOST_MYSQL_PORT):localhost:3306 \
     	-i $(MULTIPASS_SSH_KEY_PATH) \
-		-fN \
+		-L $(LOCALHOST_APP_PORT):localhost:1323 \
+		-L $(LOCALHOST_MYSQL_PORT):localhost:3306 \
     	ubuntu@`make -s echo-vm-ip`
 
 .PHONY: stop-portforward-vm
 stop-portforward-vm:
-	sudo kill -9 `sudo lsof -t -i:$(LOCALHOST_APP_PORT)`
-	sudo kill -9 `sudo lsof -t -i:$(LOCALHOST_MYSQL_PORT)`
+	sudo kill -9 \
+		`sudo lsof -t -i:$(LOCALHOST_APP_PORT)` \
+		`sudo lsof -t -i:$(LOCALHOST_MYSQL_PORT)`
 
 .PHONY: open-portainer
 open-portainer:

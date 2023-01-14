@@ -1,6 +1,7 @@
 PROJ_NAME = go-web-server-sample
 VM_NAME = $(PROJ_NAME)-vm
 MULTIPASS_SSH_KEY_PATH = /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa
+LOCALHOST_APP_PORT = 11323
 LOCALHOST_MYSQL_PORT = 13306
 
 .PHONY: launch-vm
@@ -41,6 +42,10 @@ echo-vm-ip:
 
 .PHONY: portforward-vm
 portforward-vm:
+	sudo ssh -L $(LOCALHOST_APP_PORT):localhost:1323 \
+    	-i $(MULTIPASS_SSH_KEY_PATH) \
+		-fN \
+    	ubuntu@`make -s echo-vm-ip`
 	sudo ssh -L $(LOCALHOST_MYSQL_PORT):localhost:3306 \
     	-i $(MULTIPASS_SSH_KEY_PATH) \
 		-fN \
@@ -48,6 +53,7 @@ portforward-vm:
 
 .PHONY: stop-portforward-vm
 stop-portforward-vm:
+	sudo kill -9 `sudo lsof -t -i:$(LOCALHOST_APP_PORT)`
 	sudo kill -9 `sudo lsof -t -i:$(LOCALHOST_MYSQL_PORT)`
 
 .PHONY: open-portainer

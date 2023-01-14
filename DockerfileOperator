@@ -4,9 +4,9 @@ ARG PROJ_NAME=go-web-server-sample
 
 FROM golang:$GO_VERSION-alpine
 RUN apk update && \
-    apk add --no-cache git gcc musl-dev && \
-    adduser -D noroot
-USER noroot
+apk add --no-cache git gcc musl-dev && \
+adduser -D nonroot
+USER nonroot
 
 ARG SQL_MIGRATE_VERSION
 RUN go install github.com/rubenv/sql-migrate/...@v$SQL_MIGRATE_VERSION

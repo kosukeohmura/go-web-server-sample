@@ -1,5 +1,5 @@
 services:
-  rdb:
+  db:
     image: mysql:8.0.31
     platform: linux
     restart: always

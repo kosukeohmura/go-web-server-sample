@@ -32,13 +32,3 @@ services:
       timeout: 1s
       retries: 3
       start_period: 1s
-  operator:
-    build:
-      context: .
-      dockerfile: DockerfileOperator
-    volumes:
-      - type: bind
-        source: .
-        target: /go/src/github.com/kosukeohmura/go-web-server-sample
-    working_dir: /go/src/github.com/kosukeohmura/go-web-server-sample
-    tty: true

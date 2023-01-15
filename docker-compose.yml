@@ -9,10 +9,13 @@ services:
         target: /go/src/github.com/kosukeohmura/go-web-server-sample
     working_dir: /go/src/github.com/kosukeohmura/go-web-server-sample
     command: go run main.go
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: mysql:8.0.31
     platform: linux
-    restart: always
+    restart: unless-stopped
     ports:
       - "3306:3306"
     environment:
@@ -23,6 +26,12 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_general_ci
       - --default-storage-engine=innodb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1s
+      timeout: 1s
+      retries: 3
+      start_period: 1s
   operator:
     build:
       context: .

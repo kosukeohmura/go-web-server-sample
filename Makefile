@@ -1,16 +1,19 @@
 PROJ_NAME = go-web-server-sample
 VM_NAME = $(PROJ_NAME)-vm
+VM_IP = `multipass info $(VM_NAME) --format json | jq -r '.info["$(VM_NAME)"].ipv4[0]'`
 MULTIPASS_SSH_KEY_PATH = /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa
 LOCALHOST_APP_PORT = 11323
 LOCALHOST_MYSQL_PORT = 13306
+VM_APP_PORT = 1323
+VM_MYSQL_PORT = 3306
 
 .PHONY: launch-vm
 launch-vm:
 	multipass launch 22.04 \
 		--name $(VM_NAME) \
 		--cpus 2 \
-		--mem 4G \
-		--disk 8G \
+		--mem 2G \
+		--disk 24G \
 		--mount $(PWD):/home/ubuntu/$(PROJ_NAME) \
 		--cloud-init cloud-config.yml
 
@@ -36,18 +39,14 @@ cloud-config.yml:
 		yq '.packages += "docker-compose-plugin"' \
 		> cloud-config.yml
 
-.PHONY: echo-vm-ip
-echo-vm-ip:
-	multipass info $(VM_NAME) --format json | jq -r '.info["$(VM_NAME)"].ipv4[0]'
-
 .PHONY: portforward-vm
-portforward-vm:
+start-portforward-vm:
 	sudo ssh \
 		-fN \
     	-i $(MULTIPASS_SSH_KEY_PATH) \
-		-L $(LOCALHOST_APP_PORT):localhost:1323 \
-		-L $(LOCALHOST_MYSQL_PORT):localhost:3306 \
-    	ubuntu@`make -s echo-vm-ip`
+		-L $(LOCALHOST_APP_PORT):localhost:$(VM_APP_PORT) \
+		-L $(LOCALHOST_MYSQL_PORT):localhost:$(VM_MYSQL_PORT) \
+    	ubuntu@$(VM_IP)
 
 .PHONY: stop-portforward-vm
 stop-portforward-vm:

@@ -61,7 +61,7 @@ stop-portforward-vm:
 
 .PHONY: open-portainer
 open-portainer:
-	open http://`make -s echo-vm-ip`:9000
+	open http://$(VM_IP):9000
 
 .PHONY: docker-compose-up
 docker-compose-up:

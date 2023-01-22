@@ -13,6 +13,9 @@ services:
         source: .
         target: /go/src/github.com/kosukeohmura/go-web-server-sample
         consistency: cached
+      - type: volume
+        source: go_module_cache
+        target: /go/pkg/mod
     environment:
       - "DEBUGGER_PROTOCOL=${DEBUGGER_PROTOCOL:-}"
       - "DEBUGGER_PORT=${DEBUGGER_PORT:-8181}"
@@ -40,3 +43,6 @@ services:
       timeout: 1s
       retries: 30
       start_period: 1s
+
+volumes:
+  go_module_cache:

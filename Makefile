@@ -4,8 +4,10 @@ VM_IP = `multipass info $(VM_NAME) --format json | jq -r '.info["$(VM_NAME)"].ip
 MULTIPASS_SSH_KEY_PATH = /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa
 LOCALHOST_APP_PORT = 11323
 LOCALHOST_MYSQL_PORT = 13306
+LOCALHOST_DEBUGGER_PORT = 18181
 VM_APP_PORT = 1323
 VM_MYSQL_PORT = 3306
+VM_DEBUGGER_PORT = 8181
 
 .PHONY: launch-vm
 launch-vm:
@@ -46,13 +48,15 @@ start-portforward-vm:
     	-i $(MULTIPASS_SSH_KEY_PATH) \
 		-L $(LOCALHOST_APP_PORT):localhost:$(VM_APP_PORT) \
 		-L $(LOCALHOST_MYSQL_PORT):localhost:$(VM_MYSQL_PORT) \
+		-L $(LOCALHOST_DEBUGGER_PORT):localhost:$(VM_DEBUGGER_PORT) \
     	ubuntu@$(VM_IP)
 
 .PHONY: stop-portforward-vm
 stop-portforward-vm:
 	sudo kill -9 \
 		`sudo lsof -t -i:$(LOCALHOST_APP_PORT)` \
-		`sudo lsof -t -i:$(LOCALHOST_MYSQL_PORT)`
+		`sudo lsof -t -i:$(LOCALHOST_MYSQL_PORT)` \
+		`sudo lsof -t -i:$(LOCALHOST_DEBUGGER_PORT)`
 
 .PHONY: open-portainer
 open-portainer:

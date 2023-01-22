@@ -1,14 +1,21 @@
 services:
   app:
-    image: golang:1.19.5-alpine
+    build:
+      context: .
+      dockerfile: DockerfileDebug
+    stop_signal: SIGKILL
     ports:
       - "1323:1323"
+      - "${DEBUGGER_PORT:-8181}:${DEBUGGER_PORT:-8181}"
     volumes:
       - type: bind
         source: .
         target: /go/src/github.com/kosukeohmura/go-web-server-sample
+        consistency: cached
+    environment:
+      - "DEBUGGER_PROTOCOL=${DEBUGGER_PROTOCOL:-}"
+      - "DEBUGGER_PORT=${DEBUGGER_PORT:-8181}"
     working_dir: /go/src/github.com/kosukeohmura/go-web-server-sample
-    command: go run main.go
     depends_on:
       db:
         condition: service_healthy

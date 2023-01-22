@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: DockerfileDebug
+      dockerfile: DockerfileLocal
     restart: unless-stopped
     stop_signal: SIGKILL
     ports:
@@ -31,8 +31,8 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_USER: root
-      MYSQL_ROOT_PASSWORD: debug
-      MYSQL_DATABASE: go_web_server_sample_debug
+      MYSQL_ROOT_PASSWORD: local
+      MYSQL_DATABASE: go_web_server_sample_local
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_general_ci

@@ -74,7 +74,3 @@ docker-compose-down:
 .PHONY: vm-shell
 vm-shell:
 	multipass shell $(VM_NAME)
-
-.PHONY: mysql-local
-mysql-local:
-	mysql -h 127.0.0.1 -u root --port=$(LOCALHOST_MYSQL_PORT) -pdebug go_web_server_sample_debug

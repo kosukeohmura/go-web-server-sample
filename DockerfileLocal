@@ -1,13 +1,13 @@
 ARG GO_VERSION=1.19.5
 
 FROM golang:${GO_VERSION}-alpine
-COPY start-debug-server.sh /usr/local/bin/start-debug-server.sh
+COPY start-local-server.sh /usr/local/bin/start-local-server.sh
 
 RUN apk update && \
     apk add --no-cache gcc musl-dev && \
     adduser -D nonroot && \
-chmod 755 /usr/local/bin/start-debug-server.sh
+chmod 755 /usr/local/bin/start-local-server.sh
 USER nonroot
 RUN go install github.com/go-delve/delve/cmd/dlv@v1.20.1
 
-CMD ["start-debug-server.sh"]
+CMD ["start-local-server.sh"]

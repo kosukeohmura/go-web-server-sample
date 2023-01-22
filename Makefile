@@ -10,7 +10,7 @@ VM_MYSQL_PORT = 3306
 VM_DEBUGGER_PORT = 8181
 
 .PHONY: launch-vm
-launch-vm:
+launch-vm: cloud-config.yml
 	multipass launch 22.04 \
 		--name $(VM_NAME) \
 		--cpus 2 \

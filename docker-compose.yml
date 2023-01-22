@@ -30,9 +30,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_USER: ${DB_USER:-local}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-local}
+      MYSQL_USER: ${DB_USER:-local}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-local}
       MYSQL_DATABASE: ${DB_SCHEMA:-local}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "1"
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_0900_bin

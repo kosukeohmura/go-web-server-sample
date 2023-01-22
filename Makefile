@@ -49,6 +49,7 @@ start-portforward-vm:
 		-L $(LOCALHOST_APP_PORT):localhost:$(VM_APP_PORT) \
 		-L $(LOCALHOST_MYSQL_PORT):localhost:$(VM_MYSQL_PORT) \
 		-L $(LOCALHOST_DEBUGGER_PORT):localhost:$(VM_DEBUGGER_PORT) \
+		-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
     	ubuntu@$(VM_IP)
 
 .PHONY: stop-portforward-vm

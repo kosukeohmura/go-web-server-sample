@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: DockerfileDebug
+    restart: unless-stopped
     stop_signal: SIGKILL
     ports:
       - "1323:1323"

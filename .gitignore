@@ -19,3 +19,11 @@
 
 # Go workspace file
 go.work
+
+# IntelliJ
+.idea
+# Goland's output filename can not be set manually
+/go_build_*
+
+# MS VSCode
+__debug_bin

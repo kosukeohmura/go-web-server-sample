@@ -15,6 +15,7 @@ system_info:
   default_user:
     name: ubuntu
     groups: [docker]
+timezone: UTC
 runcmd:
   - |
     # disable unnecessary services

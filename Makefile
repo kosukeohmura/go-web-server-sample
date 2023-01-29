@@ -1,5 +1,5 @@
 PROJ_NAME = go-web-server-sample
-VM_NAME = $(PROJ_NAME)-vm
+VM_NAME = $(PROJ_NAME)
 VM_IP = `multipass info $(VM_NAME) --format json | jq -r '.info["$(VM_NAME)"].ipv4[0]'`
 MULTIPASS_SSH_KEY_PATH = /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa
 LOCALHOST_APP_PORT = 11323
@@ -8,16 +8,18 @@ LOCALHOST_DEBUGGER_PORT = 18181
 VM_APP_PORT = 1323
 VM_MYSQL_PORT = 3306
 VM_DEBUGGER_PORT = 8181
+VM_PORTAINER_PORT = 9000
 
 .PHONY: launch-vm
-launch-vm: cloud-config.yml
+launch-vm:
 	multipass launch 22.04 \
+		-vvvv \
 		--name $(VM_NAME) \
 		--cpus 2 \
 		--mem 2G \
 		--disk 24G \
 		--mount $(PWD):/home/ubuntu/$(PROJ_NAME) \
-		--cloud-init cloud-config.yml
+		--cloud-init cloud-config.local.yml
 
 .PHONY: start-vm
 start-vm:
@@ -34,12 +36,6 @@ delete-vm:
 .PHONY: delete-vm/purge
 delete-vm/purge:
 	multipass delete --purge $(VM_NAME)
-
-cloud-config.yml:
-	curl -fsSL https://raw.githubusercontent.com/canonical/multipass-blueprints/35f1e18a94806266c5c7f0763f3054f2ec44256d/v1/docker.yaml | \
-		yq '.instances.docker.cloud-init.vendor-data' | \
-		yq '.packages += "docker-compose-plugin"' \
-		> cloud-config.yml
 
 .PHONY: portforward-vm
 start-portforward-vm:
@@ -61,7 +57,7 @@ stop-portforward-vm:
 
 .PHONY: open-portainer
 open-portainer:
-	open http://$(VM_IP):9000
+	open http://$(VM_IP):$(VM_PORTAINER_PORT)
 
 .PHONY: docker-compose-up
 docker-compose-up:

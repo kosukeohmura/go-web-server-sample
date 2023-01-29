@@ -1,0 +1,42 @@
+apt:
+  sources:
+    # ref: https://docs.docker.com/engine/install/ubuntu/#set-up-the-repository
+    docker.list:
+      source: deb [arch=arm64 signed-by=$KEY_FILE] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-compose-plugin
+users:
+  - default
+system_info:
+  default_user:
+    name: ubuntu
+    groups: [docker]
+runcmd:
+  - |
+    # disable unnecessary services
+    systemctl disable man-db.timer man-db.service --now
+    systemctl disable apport.service apport-autoreport.service  --now
+    systemctl disable apt-daily.service apt-daily.timer --now
+    systemctl disable apt-daily-upgrade.service apt-daily-upgrade.timer --now
+    systemctl disable unattended-upgrades.service --now
+    systemctl disable motd-news.service motd-news.timer --now
+    systemctl disable bluetooth.target --now
+    systemctl disable ua-messaging.service ua-messaging.timer --now
+  - |
+    # portainer, to easily manage containers
+    # available on http://<IP>:9000
+    docker run -d \
+      -p 9000:9000 \
+      --name=portainer \
+      --restart=always \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v portainer_data:/data \
+      portainer/portainer-ce
+  - |
+    # apt cleanup
+    apt-get autoremove -y
+final_message: "The system is finally up, after $UPTIME seconds"
